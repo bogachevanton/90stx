@@ -1,6 +1,6 @@
 # 90stx
 
- * 1 - for lottery tickets
+ * 1 - for tickets
  * 2 - for jackpot tickets
  * 3 - for a mint from these contracts
  * 4 - trait for commission
