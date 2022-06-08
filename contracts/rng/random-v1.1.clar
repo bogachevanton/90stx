@@ -1,4 +1,4 @@
-;; RNG v1.1 90 STX Raffle 2
+;; RNG v1.1 90 STX Raffle
 ;; 90STX.XYZ PLATFORM
 
 ;; Constants and Errors
