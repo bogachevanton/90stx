@@ -1,11 +1,11 @@
-;; 90STX Prizes Mini Raffle 3
+;; 90STX Mini Raffle 6
 ;; 90STX.XYZ PLATFORM
 
 ;; Traits
 (impl-trait 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.nft-trait)
 
 ;; Define NFT token
-(define-non-fungible-token ticket-90stx-mini-raffle-3 uint)
+(define-non-fungible-token ticket-90stx-mini-raffle-6 uint)
 
 ;; Storage
 (define-map token-count principal uint)
@@ -23,11 +23,11 @@
 (define-constant REACHED-BLOCK-PICK-LIMIT (err u106))
 
 ;; Variables
-(define-data-var cost uint u5000000)
+(define-data-var cost uint u7000000)
 (define-data-var last-id uint u0)
-(define-data-var mint-limit uint u100)
+(define-data-var mint-limit uint u150)
 (define-data-var sale-active bool false)
-(define-data-var base-uri (string-ascii 80) "ipfs://QmRAtPnWMEFHx4t2y2m1un1233xf2ye6C7oigs6xk5aGnK/")
+(define-data-var base-uri (string-ascii 80) "ipfs://QmQmfb3Hq2o61Ba9ZqDKqpC7QuJxGn5WRFeqTbtN7wEX34/")
 
 ;; Get balance
 (define-read-only (get-balance (account principal))
@@ -43,7 +43,7 @@
 
 ;; Get the owner of the specified token ID
 (define-read-only (get-owner (id uint))
-  (ok (nft-get-owner? ticket-90stx-mini-raffle-3 id)))
+  (ok (nft-get-owner? ticket-90stx-mini-raffle-6 id)))
 
 ;; Get the last token ID
 (define-read-only (get-last-token-id)
@@ -135,7 +135,7 @@
     (let ((next-id (+ u1 (var-get last-id))))
       (asserts! (var-get sale-active) ERR-SALE-NOT-ACTIVE)
       (asserts! (< (var-get last-id) (var-get mint-limit)) ERR-SOLD-OUT)
-      (match (nft-mint? ticket-90stx-mini-raffle-3 next-id new-owner)
+      (match (nft-mint? ticket-90stx-mini-raffle-6 next-id new-owner)
         success
         (let
         ((current-balance (get-balance new-owner)))
@@ -152,11 +152,11 @@
 ;; Burn NFT
 (define-public (burn (id uint))
   (let
-    ((owner (unwrap! (nft-get-owner? ticket-90stx-mini-raffle-3 id) ERR-NOT-FOUND))
+    ((owner (unwrap! (nft-get-owner? ticket-90stx-mini-raffle-6 id) ERR-NOT-FOUND))
     (owner-balance (get-balance owner)))
     (asserts! (is-sender-owner id) ERR-NOT-AUTHORIZED)
     (begin
-        (try! (nft-burn? ticket-90stx-mini-raffle-3 id owner))
+        (try! (nft-burn? ticket-90stx-mini-raffle-6 id owner))
         (map-set token-count
         owner
         (- owner-balance u1))
@@ -168,7 +168,7 @@
   ((pay (uint uint) (response bool uint))))
 
 (define-private (trnsfr (id uint) (sender principal) (recipient principal))
-  (match (nft-transfer? ticket-90stx-mini-raffle-3 id sender recipient)
+  (match (nft-transfer? ticket-90stx-mini-raffle-6 id sender recipient)
         success
           (let
             ((sender-balance (get-balance sender))
@@ -183,7 +183,7 @@
         error (err error)))
 
 (define-private (is-sender-owner (id uint))
-  (let ((owner (unwrap! (nft-get-owner? ticket-90stx-mini-raffle-3 id) false)))
+  (let ((owner (unwrap! (nft-get-owner? ticket-90stx-mini-raffle-6 id) false)))
     (or (is-eq tx-sender owner) (is-eq contract-caller owner))))
 
 (define-read-only (get-listing-in-ustx (id uint))
@@ -204,7 +204,7 @@
     (ok true)))
 	
 (define-public (buy-in-ustx (id uint) (comm <commission-trait>))
-  (let ((owner (unwrap! (nft-get-owner? ticket-90stx-mini-raffle-3 id) ERR-NOT-FOUND))
+  (let ((owner (unwrap! (nft-get-owner? ticket-90stx-mini-raffle-6 id) ERR-NOT-FOUND))
       (listing (unwrap! (map-get? market id) ERR-LISTING))
       (price (get price listing)))
     (asserts! (is-eq (contract-of comm) (get commission listing)) ERR-WRONG-COMMISSION)

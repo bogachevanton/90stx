@@ -24,12 +24,12 @@
 (define-constant REACHED-BLOCK-PICK-LIMIT (err u106))
 
 ;; Variables
-(define-data-var commis uint u0)
-(define-data-var cost uint u0)
+(define-data-var commis uint u10)
+(define-data-var cost uint u15000000)
 (define-data-var last-id uint u0)
-(define-data-var mint-limit uint u0)
+(define-data-var mint-limit uint u200)
 (define-data-var sale-active bool false)
-(define-data-var base-uri (string-ascii 80) "ipfs://CID/")
+(define-data-var base-uri (string-ascii 80) "ipfs://Qmac3fPveBzGJSY8ZRpAHJWppiaXEseRuGLi7cNTD1J1Nz/")
 
 ;; Get balance
 (define-read-only (get-balance (account principal))
