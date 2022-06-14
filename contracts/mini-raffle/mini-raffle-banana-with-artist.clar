@@ -10,7 +10,8 @@
 
 ;; Constants and Errors
 (define-constant CONTRACT-OWNER tx-sender)
-(define-constant WALLET 'principal)
+(define-constant WALLET_ARTIST 'principal)
+(define-constant WALLET_TEAM 'principal)
 (define-constant ERR-SOLD-OUT (err u100))
 (define-constant ERR-WRONG-COMMISSION (err u101))
 (define-constant ERR-NOT-AUTHORIZED (err u102))
@@ -20,6 +21,7 @@
 (define-constant REACHED-BLOCK-PICK-LIMIT (err u106))
 
 ;; Variables
+(define-data-var commis uint u0)
 (define-data-var cost uint u0)
 (define-data-var last-id uint u0)
 (define-data-var mint-limit uint u0)
@@ -83,6 +85,13 @@
     (var-set cost new-price)
     (ok true)))
 
+;; Set commission (only contract owner)
+(define-public (set-commission-in-percent (new-commis uint))
+  (begin
+    (asserts! (is-eq tx-sender CONTRACT-OWNER) ERR-NOT-AUTHORIZED)
+    (var-set commis new-commis)
+    (ok true)))
+
 ;; Set mint limit (only contract owner)
 (define-public (set-mint-limit (limit uint))
   (begin
@@ -135,9 +144,12 @@
       (match (nft-mint? ticket-90stx-mini-raffle-N next-id new-owner)
         success
         (let
-        ((current-balance (get-balance new-owner)))
+        ((current-balance (get-balance new-owner))
+        (team (/ (* (var-get cost) (var-get commis)) u100))
+        (artist (- (var-get cost) team)))
           (begin
-            (try! (contract-call? 'SP2KAF9RF86PVX3NEE27DFV1CQX0T4WGR41X3S45C.btc-monkeys-bananas transfer (var-get cost) tx-sender WALLET none))
+            (try! (contract-call? 'SP2KAF9RF86PVX3NEE27DFV1CQX0T4WGR41X3S45C.btc-monkeys-bananas transfer artist tx-sender WALLET_ARTIST none))
+            (try! (contract-call? 'SP2KAF9RF86PVX3NEE27DFV1CQX0T4WGR41X3S45C.btc-monkeys-bananas transfer team tx-sender WALLET_TEAM none))
             (var-set last-id next-id)
             (map-set token-count
               new-owner
